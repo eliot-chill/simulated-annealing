@@ -27,3 +27,17 @@ h1 {
     text-align: center;
     color: gainsboro;
 }
+
+#canvasDiv {
+    margin: 0 0 10px 0;
+}
+
+.controls {
+    display: flex;
+    flex-direction: row;
+}
+
+.single-control {
+    font-size: 16px;
+    margin: 0 5px 0 5px;
+}
