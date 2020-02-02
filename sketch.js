@@ -1,10 +1,8 @@
 var points = [];
-var POINTS_NUM = 200;
+var POINTS_NUM = 50;
 var variance = 0.6;
 
 var highlightPoints = false;
-
-
 
 function drawPoints() {
     for (let i = 0; i < points.length; i++) {
@@ -17,15 +15,13 @@ function drawPoints() {
     }
 }
 
-function drawLine(){
-    randomPoint = random(points);
+function drawLine(currentSolution) {
 
     //console.log(points.length+":"+points.indexOf(randomPoint));
 
-    line(randomPoint.getX(),windowHeight/2,randomPoint.getX(),randomPoint.getY());
+    line(currentSolution.getX(), windowHeight / 2, currentSolution.getX(), currentSolution.getY());
 
 }
-
 
 function setup() {
     var graphWidth = windowWidth - 50;
@@ -33,28 +29,35 @@ function setup() {
     var cnv = createCanvas(graphWidth, graphHeight);
     cnv.style('display', 'block');
     cnv.parent("canvasDiv");
-    
+
 
     var xOffset = 0;
     var yOffset = 0;
     var yPoint = 0;
     var xPoint = 0;
-        for (let i = 0; i < POINTS_NUM; i++) {
-            xPoint = xOffset;
-            yPoint = map(noise(xOffset, yOffset), 0, 1, 0, graphHeight)*variance;
+    for (let i = 0; i < POINTS_NUM + 1; i++) {
+        xOffset = i * (graphWidth / (POINTS_NUM));
+        xPoint = xOffset;
+        yPoint = map(noise(xOffset, yOffset), 0, 1, 0, graphHeight) * variance;
 
-            points.push(new Point(xPoint, yPoint));
-            xOffset = i * (graphWidth / (POINTS_NUM - 2));
+        points.push(new Point(xPoint, yPoint));
+
 
     }
-    frameRate(15)
-
+    //frameRate(15)
+    
+    sim.setupSim(points);
 }
 
+var sim = new SimAnneal;
+var currentSolution = null;
 function draw() {
     background(255, 255, 255);
+    if(sim.getTemp() > 0){
+        currentSolution = sim.runSim(points);        
+    }
     drawPoints();
-    drawLine();
+    drawLine(currentSolution);
 }
 
 
@@ -76,14 +79,12 @@ $(document).on('click', '#highlightPoints', function () {
     clear();
     if (this.checked) {
         highlightPoints = true;
-        resetSketch();
     } else {
         highlightPoints = false;
-        resetSketch();
     }
 });
 
-function resetPoints(){
+function resetPoints() {
     points = [];
 }
 
